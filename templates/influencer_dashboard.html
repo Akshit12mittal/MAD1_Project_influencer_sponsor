@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Influencer Dashboard | Brand Booster</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --dark-bg: #0c0c1d;
+            --card-bg: #1a1a2e;
+            --text-light: rgba(255, 255, 255, 0.85);
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(90deg, rgba(26, 26, 46, 0.8), rgba(12, 12, 29, 0.8));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .brand-name {
+            font-weight: 700;
+        }
+        
+        .brand-name span {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-link {
+            color: var(--text-light);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border: none;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+        
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .tag-pill {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .campaign-card {
+            background-color: rgba(26, 26, 46, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .campaign-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            height: 4px;
+            width: 50px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border-radius: 2px;
+        }
+        
+        .dashboard-container {
+            display: block;
+        }
+        
+        .content-div {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top mb-4">
+        <div class="container">
+            <a class="navbar-brand brand-name" href="#">Brand<span>Booster</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showDiv('my_inf_dashboard')">
+                            <i class="fas fa-user-circle me-2"></i>My Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showDiv('active_campaign')">
+                            <i class="fas fa-bullhorn me-2"></i>Active Campaigns
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="{{ url_for('find') }}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-search me-2"></i>Find
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-primary">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Profile Section -->
+        <div id="my_inf_dashboard" class="dashboard-container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="dashboard-card p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <div class="profile-image">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="tag-pill">
+                                <i class="fas fa-star me-1"></i> Influencer Account
+                            </div>
+                            <h2 class="mb-3">Welcome, {{ user.username }}!</h2>
+                        </div>
+                        
+                        <div class="row g-4 mt-2">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-dark bg-opacity-50 rounded">
+                                    <div class="text-muted mb-2">Email</div>
+                                    <div class="fs-5 fw-bold">{{ user.email }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-dark bg-opacity-50 rounded">
+                                    <div class="text-muted mb-2">Niche</div>
+                                    <div class="fs-5 fw-bold">{{ user.niche }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-dark bg-opacity-50 rounded">
+                                    <div class="text-muted mb-2">Platform</div>
+                                    <div class="fs-5 fw-bold">{{ user.platform }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-dark bg-opacity-50 rounded">
+                                    <div class="text-muted mb-2">Followers</div>
+                                    <div class="fs-5 fw-bold">{{ user.followers }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-5">
+                            <a href="#" onclick="showDiv('active_campaign')" class="btn btn-primary">
+                                <i class="fas fa-bullhorn me-2"></i>View Active Campaigns
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Campaigns Section -->
+        <div id="active_campaign" class="content-div">
+            <h3 class="section-title">Active Campaigns</h3>
+            
+            {% for campaign in active_campaigns %}
+            <div class="campaign-card p-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="mb-3">{{ campaign.name }}</h4>
+                        <p class="mb-3">{{ campaign.description }}</p>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-6 col-md-3">
+                                <div class="text-muted small">Start Date</div>
+                                <div>{{ campaign.start_date.strftime('%Y-%m-%d') }}</div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="text-muted small">End Date</div>
+                                <div>{{ campaign.end_date.strftime('%Y-%m-%d') }}</div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="text-muted small">Budget</div>
+                                <div>${{ campaign.budget }}</div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="text-muted small">Visibility</div>
+                                <div>{{ campaign.visibility|capitalize }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="text-muted small">Goals</div>
+                            <div>{{ campaign.goals }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column h-100 justify-content-end">
+                            <form action="{{ url_for('respond_campaign', campaign_id=campaign.id) }}" method="post" class="d-flex gap-2">
+                                <button type="submit" name="response" value="accept" class="btn btn-success flex-grow-1">
+                                    <i class="fas fa-check me-2"></i>Accept
+                                </button>
+                                <button type="submit" name="response" value="reject" class="btn btn-danger flex-grow-1">
+                                    <i class="fas fa-times me-2"></i>Reject
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="dashboard-card p-5 text-center">
+                <i class="fas fa-bullhorn fa-4x mb-4 text-muted"></i>
+                <h4>No active campaigns available</h4>
+                <p class="text-muted">Check back later for new campaign opportunities.</p>
+                <a href="{{ url_for('find') }}" class="btn btn-primary mt-3">
+                    <i class="fas fa-search me-2"></i>Find Campaigns
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showDiv(divId) {
+            var divs = document.getElementsByClassName('content-div');
+            for (var i = 0; i < divs.length; i++) {
+                divs[i].style.display = 'none';
+            }
+            document.getElementById(divId).style.display = 'block';
+            
+            // Update active nav link
+            var navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(divId)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Show the profile section by default
+        document.addEventListener('DOMContentLoaded', function() {
+            showDiv('my_inf_dashboard');
+        });
+    </script>
+</body>
+</html>

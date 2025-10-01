@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find | Brand Booster</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --dark-bg: #0c0c1d;
+            --card-bg: #1a1a2e;
+            --text-light: rgba(255, 255, 255, 0.85);
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, rgba(26, 26, 46, 0.8), rgba(12, 12, 29, 0.8));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title span {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .search-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .search-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px 16px 0 0 !important;
+        }
+        
+        .card-header i {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .form-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .form-select {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+        }
+        
+        .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+        
+        .btn-outline-light {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            color: white;
+        }
+        
+        .tag-pill {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header mb-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 fw-bold">Brand<span style="color: #8b5cf6;">Booster</span></h2>
+                <div>
+                    <button class="btn btn-outline-light me-2" onclick="showDiv('find')">
+                        <i class="fas fa-search me-2"></i>Find
+                    </button>
+                    <a href="{{ url_for('logout') }}" class="btn btn-primary">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="find" class="content-div">
+            <div class="tag-pill">
+                <i class="fas fa-compass me-1"></i> Discovery Tool
+            </div>
+            <h1 class="page-title mb-5">Find <span>Connections</span></h1>
+            
+            <div class="row g-4">
+                <!-- Influencers Search Card -->
+                <div class="col-md-4">
+                    <div class="search-card h-100">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i> Find Influencers</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="{{ url_for('search_influencers') }}" method="POST">
+                                <div class="mb-4">
+                                    <label for="influencer" class="form-label">Select Influencer:</label>
+                                    <select id="influencer" name="influencer" class="form-select">
+                                        {% for influencer in influencers %}
+                                            <option value="{{ influencer.id }}">{{ influencer.username }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-2"></i>Search Influencers
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Campaigns Search Card -->
+                <div class="col-md-4">
+                    <div class="search-card h-100">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i> Find Campaigns</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="{{ url_for('search_campaigns') }}" method="POST">
+                                <div class="mb-4">
+                                    <label for="campaign" class="form-label">Select Active Campaign:</label>
+                                    <select id="campaign" name="campaign" class="form-select">
+                                        {% for campaign in campaigns %}
+                                            <option value="{{ campaign.id }}">{{ campaign.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-2"></i>Search Campaigns
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sponsors Search Card -->
+                <div class="col-md-4">
+                    <div class="search-card h-100">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0"><i class="fas fa-building me-2"></i> Find Sponsors</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="{{ url_for('search_sponsors') }}" method="POST">
+                                <div class="mb-4">
+                                    <label for="sponsor" class="form-label">Select Sponsor:</label>
+                                    <select id="sponsor" name="sponsor" class="form-select">
+                                        {% for sponsor in sponsors %}
+                                            <option value="{{ sponsor.id }}">{{ sponsor.company_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-2"></i>Search Sponsors
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showDiv(divId) {
+            var divs = document.getElementsByClassName('content-div');
+            for (var i = 0; i < divs.length; i++) {
+                divs[i].style.display = 'none';
+            }
+            document.getElementById(divId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

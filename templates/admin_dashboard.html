@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --dark-bg: #0c0c1d;
+            --card-bg: #1a1a2e;
+            --text-light: rgba(255, 255, 255, 0.85);
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, rgba(26, 26, 46, 0.8), rgba(12, 12, 29, 0.8));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .header h2 {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border: none;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+        
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-card .card-title {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 100%;
+            min-height: 250px;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            height: 4px;
+            width: 50px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row header sticky-top mb-4">
+            <div class="col-12 d-flex justify-content-between align-items-center px-4">
+                <h2 class="mb-0">Brand Booster Admin</h2>
+                <div>
+                    <a href="{{ url_for('find') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i> Find
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row px-4">
+            <div class="col-12">
+                <h3 class="section-title">Dashboard Statistics</h3>
+            </div>
+        </div>
+        
+        <div class="row px-4 g-4">
+            <!-- First row -->
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Influencers</h5>
+                        <div class="stat-value">{{ active_influencers }}</div>
+                        <div class="d-flex align-items-center text-success">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            <span>12% increase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Sponsors</h5>
+                        <div class="stat-value">{{ active_sponsors }}</div>
+                        <div class="d-flex align-items-center text-success">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            <span>8% increase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Campaigns</h5>
+                        <div class="stat-value">{{ total_campaigns }}</div>
+                        <div class="d-flex align-items-center text-success">
+                            <i class="fas fa-arrow-up me-1"></i>
+                            <span>15% increase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Requests</h5>
+                        <div class="stat-value">{{ pending_requests }}</div>
+                        <div class="d-flex align-items-center text-warning">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+                            <span>Needs attention</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Second row -->
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Public Campaigns</h5>
+                        <div class="stat-value">{{ public_campaigns }}</div>
+                        <div class="d-flex align-items-center text-info">
+                            <i class="fas fa-globe me-1"></i>
+                            <span>Publicly visible</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Private Campaigns</h5>
+                        <div class="stat-value">{{ private_campaigns }}</div>
+                        <div class="d-flex align-items-center text-info">
+                            <i class="fas fa-lock me-1"></i>
+                            <span>Invitation only</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Accepted Requests</h5>
+                        <div class="stat-value">{{ accepted_requests }}</div>
+                        <div class="d-flex align-items-center text-success">
+                            <i class="fas fa-check-circle me-1"></i>
+                            <span>Approved</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Rejected Requests</h5>
+                        <div class="stat-value">{{ rejected_requests }}</div>
+                        <div class="d-flex align-items-center text-danger">
+                            <i class="fas fa-times-circle me-1"></i>
+                            <span>Declined</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Third row -->
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Campaign Distribution</h5>
+                        <div class="chart-container">
+                            <canvas id="campaignChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Request Status</h5>
+                        <div class="chart-container">
+                            <canvas id="requestChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fourth row -->
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Flagged Influencers</h5>
+                        <div class="stat-value">{{ flagged_influencers }}</div>
+                        <div class="d-flex align-items-center text-danger">
+                            <i class="fas fa-flag me-1"></i>
+                            <span>Needs review</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Flagged Sponsors</h5>
+                        <div class="stat-value">{{ flagged_sponsors }}</div>
+                        <div class="d-flex align-items-center text-danger">
+                            <i class="fas fa-flag me-1"></i>
+                            <span>Needs review</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">New Users (30d)</h5>
+                        <div class="stat-value">42</div>
+                        <div class="d-flex align-items-center text-success">
+                            <i class="fas fa-user-plus me-1"></i>
+                            <span>Growing steadily</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Platform Health</h5>
+                        <div class="stat-value">98%</div>
+                        <div class="d-flex align-items-center text-success">
+                            <i class="fas fa-heartbeat me-1"></i>
+                            <span>All systems normal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Campaign Distribution Chart
+        const campaignCtx = document.getElementById('campaignChart').getContext('2d');
+        const campaignChart = new Chart(campaignCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Public Campaigns', 'Private Campaigns'],
+                datasets: [{
+                    data: [{{ public_campaigns }}, {{ private_campaigns }}],
+                    backgroundColor: [
+                        '#8b5cf6',
+                        '#6366f1'
+                    ],
+                    borderColor: [
+                        '#1a1a2e',
+                        '#1a1a2e'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Request Status Chart
+        const requestCtx = document.getElementById('requestChart').getContext('2d');
+        const requestChart = new Chart(requestCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Pending', 'Accepted', 'Rejected'],
+                datasets: [{
+                    label: 'Request Status',
+                    data: [{{ pending_requests }}, {{ accepted_requests }}, {{ rejected_requests }}],
+                    backgroundColor: [
+                        '#ffc107',
+                        '#28a745',
+                        '#dc3545'
+                    ],
+                    borderColor: [
+                        '#1a1a2e',
+                        '#1a1a2e',
+                        '#1a1a2e'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
